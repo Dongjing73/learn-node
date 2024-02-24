@@ -4,4 +4,3 @@ fs.readFile("./operations/data.txt", (err, data) => {
   else console.log(data);
 });
 fs.unlinkSync("./operations/data.txt");		// delete the file
-
