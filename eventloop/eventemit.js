@@ -1,40 +1,26 @@
-const EventEmitter = require('events');
+const fs = require('fs');
 
-class TimerEmitter extends EventEmitter {
-  constructor() {
-    super();
-    this.eventName = 'CleanTimer';
-    this.timerIds = [];
+fs.readFile('./data/test.txt', function(err, data) {
+  const startCallback = Date.now();
+  // do something that will take 10ms...
+  while (Date.now() - startCallback < 10) {
+    // do nothing
   }
-  addTimerId(id) {
-    this.timerIds.push(id);
-  }
-  removeTimerId(id) {
-    this.timerIds.shift(id);
-  }
-  trigger() {
-    this.emit(this.eventName);
-  }
-}
+  if (err) console.log('Error');
+  else console.log(data);
 
-const bar = (x, timerCleaner) => {
-  console.log(`${x} : bar`);
-  timerCleaner.trigger();
-}
-const baz = () => console.log('baz');
-const foo = (a, timerCleaner) => {
-  console.log('foo');
-  const tid = setTimeout(function() {
-    bar(a, timerCleaner);
-  }, 0);
-  baz();
-  return tid;
-}
+  const timeoutScheduled = Date.now();
+  setTimeout(() => {
+    const delay = Date.now() - timeoutScheduled;
 
-const timerEmitter = new TimerEmitter();
-timerEmitter.on(timerEmitter.eventName, () => {
-  console.log(`${timerEmitter.eventName} cleaning up timer`);
-  clearTimeout(timerEmitter.timerIds[0]);
+    console.log(`${delay}ms have passed since I was scheduled`);
+  }, 5);
+
+  setImmediate(() => {
+    console.log('I was scheduled to run immediately');
+  });
 });
-timerEmitter.addTimerId(foo(2, timerEmitter));
-timerEmitter.removeTimerId(foo(1, timerEmitter));
+
+setImmediate(() => {
+  console.log('I was scheduled to run immediately outside');
+});
